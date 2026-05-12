@@ -1,0 +1,21 @@
+# Maven build output
+target/
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# FIX: Exclude environment override files that may contain secrets
+.env
+.env.*
+docker-compose.override.yml

@@ -1,0 +1,50 @@
+services:
+  url-shortener:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # FIX: Explicitly declare the target platform so the image builds
+    # correctly on both x86_64 (CI) and Apple Silicon (local dev).
+    platform: linux/amd64
+
+    container_name: url-shortener-app
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SERVER_PORT: 8080
+      # FIX: File-based H2 URL — use AUTO_RECONNECT=TRUE so the pool
+      # recovers after brief I/O hiccups on the mounted volume.
+      SPRING_DATASOURCE_URL: jdbc:h2:file:/data/urldb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ""
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_H2_CONSOLE_ENABLED: "false"
+
+    volumes:
+      - url-shortener-data:/data
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      # FIX: Allow enough time for Spring Boot + JPA to fully start
+      # before Docker begins counting health-check failures.
+      start_period: 45s
+
+    restart: unless-stopped
+
+    # FIX: Add structured log configuration so container logs are
+    # retrievable via `docker logs` without flooding the host disk.
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  url-shortener-data:

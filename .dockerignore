@@ -1,0 +1,18 @@
+# Exclude build output - built inside Docker, not needed in context
+target/
+
+# Exclude Git files
+.git/
+.gitignore
+
+# Exclude CI/CD config files
+.github/
+Jenkinsfile
+
+# Exclude IDE files
+.idea/
+*.iml
+.vscode/
+
+# Exclude docs
+*.md
