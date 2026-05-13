@@ -64,6 +64,8 @@ curl -X POST http://localhost:8080/shorten \
 mvn spring-boot:run
 ```
 
+Note: the command is `spring-boot:run` (with a hyphen). `mvn springboot:run` will fail with “No plugin found for prefix 'springboot'”.
+
 2) Open the UI (served by Spring Boot):
 
 - http://localhost:8080/
